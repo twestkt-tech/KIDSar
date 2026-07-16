@@ -69,7 +69,7 @@ sources:
   - name: HOME4U 福岡 中古マンション
     type: generic
     enabled: false            # 要調整
-    url: "(HOME4Uの検索結果URLを貼る)"
+    url: "https://www.home4u.jp/buy/search/list/municipality/4/40/133,135,136,137/ph=3500&bl=60&m=13,4,5,14,6,7,15,8,9,17,10,16,11&wt=10"
     max_pages: 2
     pagination: { param: page }
     selectors:                # 要調整
