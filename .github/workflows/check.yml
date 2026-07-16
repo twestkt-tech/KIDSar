@@ -2,8 +2,8 @@ name: 新着物件チェック
 
 on:
   schedule:
-    - cron: "*/30 * * * *"   # 30分ごと(UTC基準)
-  workflow_dispatch:          # 手動実行も可能
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -15,6 +15,9 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mansion-notify
     steps:
       - uses: actions/checkout@v4
 
