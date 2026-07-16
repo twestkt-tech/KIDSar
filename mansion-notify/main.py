@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 """
 不動産新着通知システム(マルチサイト対応)
-config.yaml に定義した各サイトの検索結果を巡回し、
-新着物件をLINE(Messaging API)に通知する。
 
 使い方:
   python main.py                     # 通常実行(新着チェック→LINE通知)
-  python main.py --test "ソース名"   # 1ソースだけ取得して結果を画面表示(通知なし)
-  python main.py --dry-run           # 全ソース取得・新着判定するがLINEには送らない
+  python main.py --test "ソース名"   # 1ソースだけ取得して画面表示(通知なし)
+  python main.py --dry-run           # 取得・判定するがLINEに送らない
+  python main.py --send-sample      # 現在の掲載から3件をテスト送信(既読リストに影響なし)
 """
 
 import argparse
@@ -27,7 +26,6 @@ CONFIG_PATH = BASE_DIR / "config.yaml"
 SEEN_PATH = BASE_DIR / "seen.json"
 
 
-# ---------------------------------------------------------------- 設定・状態
 def load_config() -> dict:
     with open(CONFIG_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f)
@@ -46,7 +44,6 @@ def save_seen(seen: set) -> None:
     )
 
 
-# ---------------------------------------------------------------- フィルタ
 def match_filters(item: dict, f: dict) -> bool:
     if f.get("price_max_man") and item["price_man"] and item["price_man"] > f["price_max_man"]:
         return False
@@ -66,7 +63,6 @@ def match_filters(item: dict, f: dict) -> bool:
     return True
 
 
-# ---------------------------------------------------------------- LINE通知
 def send_line(messages: list[str], token: str, user_id: str) -> None:
     endpoint = "https://api.line.me/v2/bot/message/push"
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
@@ -96,7 +92,22 @@ def format_listing(item: dict) -> str:
     return "\n".join(lines)
 
 
-# ---------------------------------------------------------------- メイン
+def scrape_all(config: dict) -> list[dict]:
+    all_items = []
+    for source in config.get("sources", []):
+        if not source.get("enabled", True):
+            continue
+        print(f"[INFO] 巡回中: {source['name']}")
+        try:
+            items = scrapers.scrape(source)
+        except Exception as e:
+            print(f"[WARN] {source['name']} でエラー: {e}", file=sys.stderr)
+            continue
+        print(f"[INFO]  取得 {len(items)} 件")
+        all_items.extend(items)
+    return all_items
+
+
 def run_test(config: dict, source_name: str) -> None:
     for source in config.get("sources", []):
         if source["name"] == source_name:
@@ -112,10 +123,28 @@ def run_test(config: dict, source_name: str) -> None:
     sys.exit(1)
 
 
+def run_send_sample(config: dict, token: str, user_id: str) -> None:
+    """現在の掲載から条件に合う物件を最大3件テスト送信(seen.jsonは変更しない)"""
+    all_items = scrape_all(config)
+    matched = [i for i in all_items if match_filters(i, config.get("filters", {}))]
+    samples = matched[:3] if matched else all_items[:3]
+    if not samples:
+        send_line(["🧪 テスト送信: 物件を取得できませんでした。実行ログを確認してください。"],
+                  token, user_id)
+        print("[WARN] 送信できる物件が0件でした")
+        return
+    note = "" if matched else "\n(※条件に合う物件がなかったため条件外の物件を表示しています)"
+    header = f"🧪 テスト送信(通知の見え方確認用){note}"
+    body = "\n\n────────\n\n".join(format_listing(i) for i in samples)
+    send_line([header + "\n\n" + body], token, user_id)
+    print(f"[INFO] テスト送信完了: {len(samples)} 件")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--test", metavar="ソース名", help="1ソースのみ取得して表示(通知・既読更新なし)")
     ap.add_argument("--dry-run", action="store_true", help="LINE送信せず新着判定のみ")
+    ap.add_argument("--send-sample", action="store_true", help="現在の掲載から3件をテスト送信")
     args = ap.parse_args()
 
     config = load_config()
@@ -130,26 +159,20 @@ def main() -> None:
         print("[ERROR] 環境変数 LINE_CHANNEL_ACCESS_TOKEN / LINE_USER_ID を設定してください", file=sys.stderr)
         sys.exit(1)
 
+    if args.send_sample:
+        run_send_sample(config, token, user_id)
+        return
+
     seen = load_seen()
     first_run = len(seen) == 0
     new_items = []
 
-    for source in config.get("sources", []):
-        if not source.get("enabled", True):
+    for item in scrape_all(config):
+        if item["id"] in seen:
             continue
-        print(f"[INFO] 巡回中: {source['name']}")
-        try:
-            items = scrapers.scrape(source)
-        except Exception as e:
-            print(f"[WARN] {source['name']} でエラー: {e}", file=sys.stderr)
-            continue
-        print(f"[INFO]  取得 {len(items)} 件")
-        for item in items:
-            if item["id"] in seen:
-                continue
-            seen.add(item["id"])
-            if match_filters(item, config.get("filters", {})):
-                new_items.append(item)
+        seen.add(item["id"])
+        if match_filters(item, config.get("filters", {})):
+            new_items.append(item)
 
     save_seen(seen)
 
