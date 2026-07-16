@@ -15,16 +15,16 @@
 
 sources:
   # ---------------------------------------------------- SUUMO(専用パーサー・動作優先度高)
-  - name: SUUMO 福岡市 中古マンション
+  - name: SUUMO 福岡市早良区 中古マンション
     type: suumo
     enabled: true
-    url: "https://suumo.jp/jj/bukken/ichiran/JJ010FJ001/?ar=090&bs=011&ta=40&jspIdFlg=patternShikugun&sc=40133&sc=40135&sc=40136&sc=40137&kb=1&kt=3500&mb=60&mt=9999999&md=2&md=4&ekTjCd=&ekTjNm=&tj=0&et=5&kr=A&jc=047&cnb=0&cn=9999999"
+    url: "https://suumo.jp/jj/bukken/ichiran/JJ012FC001/?ar=090&bs=011&ta=40&sc=40137&po=0&pj=1&pc=100"
     max_pages: 3
 
-  - name: ふれんず 福岡市 中古マンション
-    type: ふれんず
+  - name: SUUMO 福岡市城南区 中古マンション
+    type: suumo
     enabled: true
-    url: "https://www.f-takken.com/freins/buy/mansion/area/items?listtype=mansion&lang=ja&limit=20&order1=pl&order2=&location=area&_token=opE6HxoE6ZRuEdQGiEmUbRoUksM8XdhLcNlSkw0I&locate%5B%5D=40133&locate%5B%5D=40135&locate%5B%5D=40136&data_21=0&data_22=3500&data_171=1&data_172=1&data_173=1&data_174=1&data_175=1&data_176=1&data_177=1&data_30=60&data_31=0&data_29=7&data_32=0&data_486=&data_486_code=&data_487=&data_487_code="
+    url: "https://suumo.jp/jj/bukken/ichiran/JJ012FC001/?ar=090&bs=011&ta=40&sc=40136&po=0&pj=1&pc=100"
     max_pages: 3
 
   # SUUMOの土地・戸建も同じtype: suumoでURLを変えるだけで動きます
@@ -32,6 +32,15 @@ sources:
   #   type: suumo
   #   enabled: false
   #   url: "(SUUMOで土地検索した結果URL)"
+
+  # ---------------------------------------------------- ふれんず(福岡県宅建協会・専用パーサー)
+  # 検索結果はJavaScriptで読み込まれるため専用パーサー(type: freins)を使用。
+  # URLはブラウザの検索結果に出る items?... のURLをそのまま貼ればOK。
+  # _token は毎回自動取得し直すので、貼ったURLのトークンが古くても問題ありません。
+  - name: ふれんず 福岡市中央・南・城南 中古マンション
+    type: freins
+    enabled: true
+    url: "https://www.f-takken.com/freins/buy/mansion/area/items?listtype=mansion&lang=ja&limit=20&order1=pl&order2=&location=area&_token=opE6HxoE6ZRuEdQGiEmUbRoUksM8XdhLcNlSkw0I&locate%5B%5D=40133&locate%5B%5D=40135&locate%5B%5D=40136&data_21=0&data_22=3500&data_171=1&data_172=1&data_173=1&data_174=1&data_175=1&data_176=1&data_177=1&data_30=60&data_31=0&data_29=7&data_32=0&data_486=&data_486_code=&data_487=&data_487_code="
 
   # ---------------------------------------------------- athome(※ボット対策が強く取得失敗しやすい)
   - name: athome 福岡 中古マンション
@@ -69,7 +78,7 @@ sources:
   - name: HOME4U 福岡 中古マンション
     type: generic
     enabled: false            # 要調整
-    url: "https://www.home4u.jp/buy/search/list/municipality/4/40/133,135,136,137/ph=3500&bl=60&m=13,4,5,14,6,7,15,8,9,17,10,16,11&wt=10"
+    url: "(HOME4Uの検索結果URLを貼る)"
     max_pages: 2
     pagination: { param: page }
     selectors:                # 要調整
