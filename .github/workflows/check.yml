@@ -33,11 +33,19 @@ jobs:
       - name: 依存パッケージのインストール
         run: pip install -r requirements.txt
 
-      - name: 新着チェック実行
+      - name: 新着チェック実行(通常)
+        if: ${{ inputs.test_send != true }}
         env:
           LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
           LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
-        run: python main.py ${{ inputs.test_send && '--send-sample' || '' }}
+        run: python main.py
+
+      - name: テスト送信
+        if: ${{ inputs.test_send == true }}
+        env:
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
+        run: python main.py --send-sample
 
       - name: 既読リスト(seen.json)をコミット
         run: |
