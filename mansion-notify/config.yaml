@@ -1,0 +1,266 @@
+# ============================================================
+# 不動産新着通知 設定ファイル(マルチサイト対応)
+# ============================================================
+#
+# 各サイトの使い方:
+#  1. そのサイトで希望条件(福岡・価格帯など)を指定して検索
+#  2. 検索結果ページのURLを url: に貼り付け
+#  3. type: generic のサイトは selectors を実ページに合わせて調整
+#     (ブラウザで右クリック→「検証」でCSSクラス名を確認)
+#  4. 調整できたら enabled: true に変更
+#  5. 動作確認: python main.py --test "ソース名"
+#
+# ※ selectorsはサイト側の改修で変わるため「要調整」の目印付きの
+#   ものは必ず --test で確認してから有効化してください。
+
+sources:
+  # ---------------------------------------------------- SUUMO(専用パーサー・動作優先度高)
+  - name: SUUMO 福岡市早良区 中古マンション
+    type: suumo
+    enabled: true
+    url: "https://suumo.jp/jj/bukken/ichiran/JJ012FC001/?ar=090&bs=011&ta=40&sc=40137&po=0&pj=1&pc=100"
+    max_pages: 3
+
+  - name: SUUMO 福岡市城南区 中古マンション
+    type: suumo
+    enabled: true
+    url: "https://suumo.jp/jj/bukken/ichiran/JJ012FC001/?ar=090&bs=011&ta=40&sc=40136&po=0&pj=1&pc=100"
+    max_pages: 3
+
+  # SUUMOの土地・戸建も同じtype: suumoでURLを変えるだけで動きます
+  # - name: SUUMO 福岡市早良区 土地
+  #   type: suumo
+  #   enabled: false
+  #   url: "(SUUMOで土地検索した結果URL)"
+
+  # ---------------------------------------------------- athome(※ボット対策が強く取得失敗しやすい)
+  - name: athome 福岡 中古マンション
+    type: generic
+    enabled: false            # 要調整: athomeはアクセス遮断されやすい。失敗時はサイトの新着メール機能を推奨
+    url: "(athomeの検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".p-property-unit"
+      title: ".p-property-unit__title"
+      link: "a"
+      price: ".p-property-unit__price"
+      address: ".p-property-unit__address"
+      layout: ".p-property-unit__layout"
+      area: ".p-property-unit__area"
+
+  # ---------------------------------------------------- LIFULL HOME'S(※ボット対策強め)
+  - name: HOMES 福岡 中古マンション
+    type: generic
+    enabled: false            # 要調整
+    url: "(HOME'Sの検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".mod-mergeBuilding--sale"
+      title: ".heading a"
+      link: ".heading a"
+      price: ".price"
+      address: ".bukkenSpec"
+      layout: ".layout"
+      area: ".space"
+
+  # ---------------------------------------------------- HOME4U
+  - name: HOME4U 福岡 中古マンション
+    type: generic
+    enabled: false            # 要調整
+    url: "(HOME4Uの検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".property-list__item"
+      title: ".property-list__title"
+      link: "a"
+      price: ".property-list__price"
+      address: ".property-list__address"
+
+  # ---------------------------------------------------- 東急リバブル
+  - name: 東急リバブル 福岡 中古マンション
+    type: generic
+    enabled: false            # 要調整
+    url: "(東急リバブルの検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: pg }
+    selectors:                # 要調整
+      item: ".o-product-list__item"
+      title: ".o-product-list__name"
+      link: "a"
+      price: ".o-product-list__price"
+      address: ".o-product-list__address"
+
+  # ---------------------------------------------------- 楽待(収益・投資)
+  - name: 楽待 福岡 収益物件
+    type: generic
+    enabled: false            # 要調整: 会員向けページが多く未ログインでは一部のみ
+    url: "(楽待の検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".property-card"
+      title: ".property-card__title"
+      link: "a"
+      price: ".property-card__price"
+      address: ".property-card__address"
+
+  # ---------------------------------------------------- 健美家(収益・投資)
+  - name: 健美家 福岡 収益物件
+    type: generic
+    enabled: false            # 要調整
+    url: "(健美家の検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".property_box"
+      title: ".property_title"
+      link: "a"
+      price: ".price"
+      address: ".address"
+
+  # ---------------------------------------------------- 三井のリハウス
+  - name: 三井のリハウス 福岡 中古マンション
+    type: generic
+    enabled: false            # 要調整
+    url: "(三井のリハウスの検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".p-result-item"
+      title: ".p-result-item__name"
+      link: "a"
+      price: ".p-result-item__price"
+      address: ".p-result-item__address"
+
+  # ---------------------------------------------------- 住友不動産販売(ステップ)
+  - name: 住友ステップ 福岡 中古マンション
+    type: generic
+    enabled: false            # 要調整
+    url: "(住友不動産販売の検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".bukken-item"
+      title: ".bukken-name"
+      link: "a"
+      price: ".bukken-price"
+      address: ".bukken-address"
+
+  # ---------------------------------------------------- 大京穴吹不動産
+  - name: 大京穴吹 福岡 中古マンション
+    type: generic
+    enabled: false            # 要調整
+    url: "(大京穴吹の検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".property-item"
+      title: ".property-name"
+      link: "a"
+      price: ".property-price"
+      address: ".property-address"
+
+  # ---------------------------------------------------- ピタットハウス
+  - name: ピタットハウス 福岡 売買
+    type: generic
+    enabled: false            # 要調整
+    url: "(ピタットハウスの検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".bukken_list_item"
+      title: ".bukken_name"
+      link: "a"
+      price: ".price"
+      address: ".address"
+
+  # ---------------------------------------------------- ノムコム(野村)
+  - name: ノムコム 福岡 中古マンション
+    type: generic
+    enabled: false            # 要調整
+    url: "(ノムコムの検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".p-searchList__item"
+      title: ".p-searchList__name"
+      link: "a"
+      price: ".p-searchList__price"
+      address: ".p-searchList__address"
+
+  # ---------------------------------------------------- センチュリー21
+  - name: センチュリー21 福岡 売買
+    type: generic
+    enabled: false            # 要調整
+    url: "(センチュリー21の検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".property-card"
+      title: ".property-card__title"
+      link: "a"
+      price: ".property-card__price"
+      address: ".property-card__address"
+
+  # ---------------------------------------------------- 大和ハウス(リブネス等)
+  - name: 大和ハウス 福岡 中古・土地
+    type: generic
+    enabled: false            # 要調整
+    url: "(大和ハウスの検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".estate-item"
+      title: ".estate-name"
+      link: "a"
+      price: ".estate-price"
+      address: ".estate-address"
+
+  # ---------------------------------------------------- カチタス
+  - name: カチタス 福岡 中古戸建・マンション
+    type: generic
+    enabled: false            # 要調整
+    url: "(カチタスの検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: page }
+    selectors:                # 要調整
+      item: ".bukken-card"
+      title: ".bukken-card__title"
+      link: "a"
+      price: ".bukken-card__price"
+      address: ".bukken-card__address"
+
+  # ---------------------------------------------------- 不動産連合隊(福岡対応)
+  - name: 不動産連合隊 福岡
+    type: generic
+    enabled: false            # 要調整
+    url: "(連合隊の検索結果URLを貼る)"
+    max_pages: 2
+    pagination: { param: p }
+    selectors:                # 要調整
+      item: ".article_estate"
+      title: ".estate_name"
+      link: "a"
+      price: ".price"
+      address: ".address"
+
+  # ---------------------------------------------------- 対象外(福岡非対応のため未収録)
+  # 恵比寿不動産  : 東京都心4区(渋谷・港・目黒・品川)専門のため福岡の物件はありません
+  # 長谷工の仲介  : 首都圏専門のため福岡の物件はありません
+  # 福岡でも探したい場合はこの2社は各社サイトの会員登録メールをご利用ください
+
+# ---------------------------------------------------- 共通フィルタ
+filters:
+  price_min_man: 1500      # 下限価格(万円)
+  price_max_man: 3500      # 上限価格(万円)
+  area_min_m2: 65          # 面積下限(㎡)※取得できたサイトのみ適用
+  layouts:                 # 間取り(部分一致)※取得できたサイトのみ適用
+    - 3LDK
+    - 4LDK
+  exclude_keywords:
+    - オーナーチェンジ
+  # include_keywords:      # 物件名・住所に必ず含めたい語(例: - 早良区)
+  #   - 福岡市
