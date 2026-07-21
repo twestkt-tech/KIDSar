@@ -46,7 +46,7 @@ sources:
   - name: athome 福岡 中古マンション
     type: generic
     enabled: false            # 要調整: athomeはアクセス遮断されやすい。失敗時はサイトの新着メール機能を推奨
-    url: "(athomeの検索結果URLを貼る)"
+    url: "https://www.athome.co.jp/mansion/chuko/theme/shinchaku/fukuoka/fukuoka-locate/list/?pref=40&cities=fukuoka_nishi,fukuoka_jonan,fukuoka_sawara&basic=kp005,kp106,kk002,kk003,km010,km015,km021,kt424,kt110,ke001,kn001&kod=&q=1&sort=95&limit=30"
     max_pages: 2
     pagination: { param: page }
     selectors:                # 要調整
@@ -62,7 +62,7 @@ sources:
   - name: HOMES 福岡 中古マンション
     type: generic
     enabled: false            # 要調整
-    url: "(HOME'Sの検索結果URLを貼る)"
+    url: "https://www.homes.co.jp/mansion/chuko/fukuoka/list/"
     max_pages: 2
     pagination: { param: page }
     selectors:                # 要調整
@@ -78,7 +78,7 @@ sources:
   - name: HOME4U 福岡 中古マンション
     type: generic
     enabled: false            # 要調整
-    url: "(HOME4Uの検索結果URLを貼る)"
+    url: "https://www.home4u.jp/buy/search/list/municipality/4/40/135,136,137/pl=2000&ph=3500&bl=60&m=14,6,7,15,8,9,17,10,16,11"
     max_pages: 2
     pagination: { param: page }
     selectors:                # 要調整
@@ -92,7 +92,7 @@ sources:
   - name: 東急リバブル 福岡 中古マンション
     type: generic
     enabled: false            # 要調整
-    url: "(東急リバブルの検索結果URLを貼る)"
+    url: "https://www.livable.co.jp/kounyu/chuko-mansion/fukuokaken/a40137,a40136,a40135/conditions-price-from=2500&price-to=3500&layout=3k-3dk-3ldk,4k-4dk-4ldk,5k&size=60/"
     max_pages: 2
     pagination: { param: pg }
     selectors:                # 要調整
@@ -106,7 +106,7 @@ sources:
   - name: 楽待 福岡 収益物件
     type: generic
     enabled: false            # 要調整: 会員向けページが多く未ログインでは一部のみ
-    url: "(楽待の検索結果URLを貼る)"
+    url: "https://www.rakumachi.jp/syuuekibukken/area/prefecture/dimAll/?realtor_id=&area%5B%5D=40135&area%5B%5D=40136&area%5B%5D=40137&line=&st=&limit=50&keyword=&newly=&price_from=2500&price_to=3000&gross_from=&gross_to=&dim%5B%5D=2001&year_from=&year_to=&b_area_from=60&b_area_to=&houses_ge=&houses_le=&min=&l_area_from=&l_area_to="
     max_pages: 2
     pagination: { param: page }
     selectors:                # 要調整
@@ -134,7 +134,7 @@ sources:
   - name: 三井のリハウス 福岡 中古マンション
     type: generic
     enabled: false            # 要調整
-    url: "(三井のリハウスの検索結果URLを貼る)"
+    url: "https://www.rehouse.co.jp/buy/mansion/prefecture/40/city/40135/?cityCode=40136,40137&minPrice=2500&maxPrice=3500&minExclusiveArea=60&floorPlan=0323456789,0423456789,H0523456789"
     max_pages: 2
     pagination: { param: page }
     selectors:                # 要調整
